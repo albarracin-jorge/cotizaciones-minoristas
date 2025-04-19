@@ -1,0 +1,15 @@
+export const bankList = [
+    "Nación",
+    "Galicia",
+    "ICBC",
+    "BBVA",
+    "Supervielle",
+    "Banco Ciudad",
+    "Patagonia",
+    "Macro",
+    "Santander Río",
+    "Banco Piano",
+    "Brubank",
+    "Galicia Más",
+    "Credicoop",
+]
