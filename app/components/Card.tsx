@@ -1,5 +1,4 @@
 import { Quote } from "../../types";
-//recibe como prop un objeto con las propiedades de Quote
 type CardProps = {
     quote: Quote;
 };
@@ -9,7 +8,7 @@ export const Card = ({ quote }: CardProps) => {
             <h2>{quote.bank_name}</h2>
             <p>Compra: {quote.buy}</p>
             <p>Venta: {quote.sell}</p>
-            <p>Hora: {quote.hour}</p>
+            <p>Ultimo horario: {quote.hour}</p>
         </div>
     )
 }
