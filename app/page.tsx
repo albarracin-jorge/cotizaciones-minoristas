@@ -1,10 +1,11 @@
+// export const revalidate = 60
+export const dynamic = 'force-dynamic'
 import Link from "next/link";
 import { getQuotes } from "@/controller/bcra";
 import { CardList } from "./components/CardList";
 
 export default async function Home() {
   const { lastDayQuotes, secondLastDayQuotes} = await getQuotes();
-  console.log(lastDayQuotes, secondLastDayQuotes);
   
   // Tipar explícitamente si quieres
   // const quotes1: Quote[] = lastDayQuotes;
