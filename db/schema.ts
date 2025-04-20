@@ -1,4 +1,5 @@
 import { mysqlTable, int, double, time, varchar, timestamp } from "drizzle-orm/mysql-core"
+import { InferSelectModel } from "drizzle-orm"
 
 export const quotesTable = mysqlTable("quotes", {
     id: int('id').primaryKey().autoincrement(),
@@ -11,3 +12,5 @@ export const quotesTable = mysqlTable("quotes", {
     updatedAt: timestamp('updatedAt').defaultNow().onUpdateNow(),
     deletedAt: timestamp('deletedAt'),
 })
+
+export type Quote = InferSelectModel<typeof quotesTable>

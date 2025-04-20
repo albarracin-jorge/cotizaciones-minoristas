@@ -1,61 +1,63 @@
 import { drizzle } from "drizzle-orm/mysql2";
-import { sql, desc } from "drizzle-orm";
+import { eq, desc, sql, and } from "drizzle-orm";
 import { quotesTable } from "@/db/schema";
 
-const db = drizzle(process.env.DATABASE_URL!)
+const db = drizzle(process.env.DATABASE_URL!);
 
+// Función para obtener la fecha N más reciente
+const getNthMostRecentDate = async (offset: number) => {
+  const result = await db
+    .select({ date: sql`DATE(${quotesTable.date})`.as('date') })
+    .from(quotesTable)
+    .groupBy(sql`DATE(${quotesTable.date})`)
+    .orderBy(desc(sql`DATE(${quotesTable.date})`))
+    .offset(offset)
+    .limit(1);
+
+  return result[0]?.date as string | undefined;
+};
+
+// Función para obtener las últimas cotizaciones por fecha
+const getQuotesForDate = async (date: string) => {
+  const subquery = db
+    .select({
+      bankName: quotesTable.bankName,
+      maxHour: sql`MAX(${quotesTable.hour})`.as('maxHour'),
+    })
+    .from(quotesTable)
+    .where(sql`DATE(${quotesTable.date}) = ${date}`)
+    .groupBy(quotesTable.bankName)
+    .as('latest');
+
+  const result = await db
+    .select()
+    .from(quotesTable)
+    .innerJoin(subquery, and(
+      eq(quotesTable.bankName, subquery.bankName),
+      eq(quotesTable.hour, subquery.maxHour),
+      sql`DATE(${quotesTable.date}) = ${date}`
+    ));
+
+  // `result` es de tipo { quotesTable: Quote, latest: { bankName, maxHour } }[]
+  return result.map(r => r.quotes);
+};
+
+// Función principal
 export const getQuotes = async () => {
-    try {
-        const lastDateResult = await db
-            .select({ date: sql`DATE(${quotesTable.date})` })
-            .from(quotesTable)
-            .groupBy(sql`DATE(${quotesTable.date})`)
-            .orderBy(desc(sql`DATE(${quotesTable.date})`))
-            .limit(1)
+  try {
+    const lastDate = await getNthMostRecentDate(0);
+    const secondLastDate = await getNthMostRecentDate(1);
 
-        const lastDate = lastDateResult[0]?.date;
-
-        const lastDayQuotesResult = await db.execute(sql`
-            SELECT qt.*
-            FROM ${quotesTable} qt
-            JOIN (
-              SELECT ${quotesTable.bankName}, MAX(${quotesTable.hour}) AS max_hour
-              FROM ${quotesTable}
-              WHERE DATE(${quotesTable.date}) = ${lastDate}
-              GROUP BY ${quotesTable.bankName}
-            ) latest
-            ON qt.bank_name = latest.bank_name AND qt.hour = latest.max_hour AND DATE(qt.date) = ${lastDate}
-          `)
-
-          const secondLastDateResult = await db
-            .select({ date: sql`DATE(${quotesTable.date})` })
-            .from(quotesTable)
-            .groupBy(sql`DATE(${quotesTable.date})`)
-            .orderBy(desc(sql`DATE(${quotesTable.date})`))
-            .offset(1)
-            .limit(1)
-
-        const secondLastDate = secondLastDateResult[0]?.date
-
-        const secondLastDayQuotesResult = await db.execute(sql`
-            SELECT qt.*
-            FROM ${quotesTable} qt
-            JOIN (
-              SELECT ${quotesTable.bankName}, MAX(${quotesTable.hour}) AS max_hour
-              FROM ${quotesTable}
-              WHERE DATE(${quotesTable.date}) = ${secondLastDate}
-              GROUP BY ${quotesTable.bankName}
-            ) latest
-            ON qt.bank_name = latest.bank_name AND qt.hour = latest.max_hour AND DATE(qt.date) = ${secondLastDate}
-          `)
-
-          const lastDayQuotes = lastDayQuotesResult[0] as Quote[];
-          const secondLastDayQuotes = secondLastDayQuotesResult[0] as Quote[];
-          
-        return { lastDayQuotes, secondLastDayQuotes };
-    } catch (error) {
-        console.error("Error fetching quotes:", error);
-        return { error: "Internal Server Error" };
+    if (!lastDate || !secondLastDate) {
+      throw new Error("No se pudieron obtener fechas suficientes.");
     }
-}
 
+    const lastDayQuotes = await getQuotesForDate(lastDate);
+    const secondLastDayQuotes = await getQuotesForDate(secondLastDate);
+
+    return { lastDayQuotes, secondLastDayQuotes };
+  } catch (error) {
+    console.error("Error fetching quotes:", error);
+    return { error: "Internal Server Error" };
+  }
+};
