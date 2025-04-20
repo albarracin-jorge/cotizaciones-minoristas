@@ -35,17 +35,17 @@ export default function RootLayout({
           `}
       >
         <header className="
-          flex items-center justify-start px-16 2xl:px-52
+          flex items-center justify-start px-4 lg:px-52
           bg-emerald-200 dark:bg-gray-950
-          shadow-xl
+          shadow-xl font-bold
         ">
           <Link href="/"
-            className="hover:bg-emerald-300 dark:hover:bg-gray-800 p-6"
+            className="hover:bg-emerald-300 dark:hover:bg-gray-800 p-4 lg:p-6"
           >
             Dolar Bancos Hoy
           </Link>
           <Link href="/about"
-            className="hover:bg-emerald-300 dark:hover:bg-gray-800 p-6"
+            className="hover:bg-emerald-300 dark:hover:bg-gray-800 p-4 lg:p-6"
           >
             Sobre el proyecto
           </Link>
@@ -53,7 +53,7 @@ export default function RootLayout({
           {children}
         <footer className="flex items-center justify-center p-4">
           <p>
-            Un proyecto por <Link href="https://github.com/albarracin-jorge">Jorge Albarracín.</Link>
+            Hecho por <Link href="https://github.com/albarracin-jorge">Jorge Albarracín.</Link>
           </p>
         </footer>
       </body>
