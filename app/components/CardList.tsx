@@ -1,7 +1,7 @@
 import { Quote } from "../../db/schema"
 import { Card } from "./Card"
 export const CardList = ({
-    lastQuotes, secondLastQuotes
+    lastQuotes
 }: {
     lastQuotes: Quote[], secondLastQuotes: Quote[]
 }) => {
