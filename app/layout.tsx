@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
+import Script from "next/script";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,6 +17,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Dolar Bancos Hoy",
   description: "Cotizacion del dolar minorista de los distintos bancos publicado diariamente por el Banco Central de la República Argentina",
+  
 };
 
 export default function RootLayout({
@@ -25,6 +27,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <Script async strategy="afterInteractive" src="https://www.googletagmanager.com/gtag/js?id=G-GR675ZTCLW"></Script>
+      <Script id="" strategy="afterInteractive">
+        {`
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-GR675ZTCLW');
+        `}
+      </Script>
       <body
         className={
           `${geistSans.variable} ${geistMono.variable} 
