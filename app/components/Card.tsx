@@ -13,8 +13,8 @@ export const Card = ({ quote }: CardProps) => {
             {quote.bankName && bankList[quote.bankName as keyof typeof bankList]?.name ? bankList[quote.bankName as keyof typeof bankList].name : "Unknown Bank"}
             </h2>
             <div className={`flex bg-transparentitems-center justify-center w-full gap-4 rounded-b-lg py-1 bg-[rgba(0,0,0,0.3)]`}>
-                <p>Compra: ${quote.buy}</p>
-                <p>Venta: ${quote.sell}</p>
+                <p>Compra: ${quote.buy || "n/a"}</p>
+                <p>Venta: ${quote.sell || "n/a"}</p>
             </div>
             {/* <p>Ultimo horario: {quote.hour}</p> */}
         </div>
