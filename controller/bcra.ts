@@ -109,6 +109,10 @@ export const getQuotes = async () => {
         }
       }
     }
+
+    //sort by bankName
+    lastDayQuotes.sort((a, b) => a.bankName!.localeCompare(b.bankName!));
+    secondLastDayQuotes.sort((a, b) => a.bankName!.localeCompare(b.bankName!));
     return { lastDayQuotes, secondLastDayQuotes };
   } catch (error) {
     console.error("Error fetching quotes:", error);
