@@ -22,7 +22,7 @@ export const Card = ({ quote, previousQuote }: CardProps) => {
             <div className={`w-full py-1.5 rounded-b-lg bg-[rgba(0,0,0,0.3)]`}>
                 <div className="flex items-center justify-center gap-4">
                     <p>
-                        Compra: ${quote.buy}
+                        Compra: ${quote.buy || "N/A"}
                         {quote.buy !== previousQuote.buy ? (
                             <span className={`text-sm ${quote.buy! > previousQuote.buy! ? "text-green-500" : "text-red-500"}`}>
                                 {quote.buy! > previousQuote.buy! ? " ▲" : " ▼"}
@@ -34,7 +34,7 @@ export const Card = ({ quote, previousQuote }: CardProps) => {
                         )}
                     </p>
                     <p>
-                        Venta: ${quote.sell}
+                        Venta: ${quote.sell || "N/A"}
                         {quote.sell !== previousQuote.sell ? (
                             <span className={`text-sm ${quote.sell! > previousQuote.sell! ? "text-green-500" : "text-red-500"}`}>
                                 {quote.sell! > previousQuote.sell! ? " ▲" : " ▼"}
