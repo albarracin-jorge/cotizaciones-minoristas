@@ -42,6 +42,20 @@ const getQuotesForDate = async (date: string) => {
   return result.map(r => r.quotes);
 };
 
+const getQuotesForDateWithBankName = async (date: string, bankName: string) => {
+  const result = await db
+    .select()
+    .from(quotesTable)
+    .where(
+      and(
+        eq(quotesTable.bankName, bankName),
+        sql`DATE(${quotesTable.date}) = ${date}`
+      )
+    );
+
+  return result;
+}
+
 // Función principal
 export const getQuotes = async () => {
   try {
@@ -54,7 +68,47 @@ export const getQuotes = async () => {
 
     const lastDayQuotes = await getQuotesForDate(lastDate);
     const secondLastDayQuotes = await getQuotesForDate(secondLastDate);
-
+    if( lastDayQuotes.length < secondLastDayQuotes.length ) {
+      //search what element is missing and fill with sell and buy value 0
+      const missingQuotes = secondLastDayQuotes.filter(
+        (quote) => !lastDayQuotes.some((q) => q.bankName === quote.bankName)
+      );
+      for (const quote of missingQuotes) {
+        lastDayQuotes.push({
+          ...quote,
+          buy: 0,
+          sell: 0,
+        });
+      }
+    }
+    if( secondLastDayQuotes.length < lastDayQuotes.length ) {
+      //search what element is missing and search the day before that and fill with sell and buy value 0
+      const missingQuotes = lastDayQuotes.filter(
+        (quote) => !secondLastDayQuotes.some((q) => q.bankName === quote.bankName)
+      );
+      for (const quote of missingQuotes) {
+        const previousQuote = await getQuotesForDateWithBankName(secondLastDate, quote.bankName!);
+        if (previousQuote.length > 0) {
+          secondLastDayQuotes.push({
+            ...previousQuote[0],
+            buy: 0,
+            sell: 0,
+          });
+        } else {
+          secondLastDayQuotes.push({
+            id: 0, // or another placeholder/default
+            bankName: quote.bankName,
+            date: new Date(secondLastDate),
+            hour: "00:00",
+            buy: 0,
+            sell: 0,
+            createdAt: new Date(),
+            updatedAt: null,
+            deletedAt: null,
+          });
+        }
+      }
+    }
     return { lastDayQuotes, secondLastDayQuotes };
   } catch (error) {
     console.error("Error fetching quotes:", error);
