@@ -3,6 +3,10 @@ export const bankList = {
         name: "Galicia",
         cardStyle: "bg-[#FA6400] text-white",
     },
+    "BANCO DE GALICIA Y BUENOS AIRES S.A.": {
+        name: "Galicia",
+        cardStyle: "bg-[#FA6400] text-white",
+    },
     "BANCO DE LA NACION ARGENTINA": {
         name: "Nación",
         cardStyle: "bg-[#005F86] text-white",
