@@ -1,4 +1,8 @@
 export const bankList = {
+    "BANCO HIPOTECARIO S.A.": {
+      name: "Hipotecario",
+      cardStyle: "bg-gray-200 text-[#f17422]",
+    },
     "BANCO DE GALICIA Y BUENOS AIRES S.A.U.": {
         name: "Galicia",
         cardStyle: "bg-[#FA6400] text-white",
